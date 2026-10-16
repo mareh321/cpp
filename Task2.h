@@ -24,7 +24,7 @@ namespace miit
              * @param cols количество столбцов
              * @param generator генератор значений; при выдаче чисел он меняет своё состояние
              */
-            Task2(const size_t rows, const size_t cols, Generator& generator);
+            Task2(const size_t rows, const size_t cols,const Generator& generator);
 
             /**
              * @brief Вставляет копию первой строки после каждой строки, содержащей элемент
