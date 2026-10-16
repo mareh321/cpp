@@ -12,7 +12,7 @@ miit::algebra::IStreamGenerator::IStreamGenerator()
 {
 }
 
-int miit::algebra::IStreamGenerator::generate()
+int miit::algebra::IStreamGenerator::generate() const
 {
     int value = 0;
     if (!(this->in >> value))
