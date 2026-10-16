@@ -18,6 +18,8 @@ namespace miit
              * @param generator указатель на генератор (необязательный)
              */
             explicit Task2(Matrix<int> matrix);
+
+            Task2(Matrix<int> matrix, const Generator& generator);
             /**
              * @brief Создаёт задачу и заполняет матрицу значениями генератора.
              * @param rows количество строк
