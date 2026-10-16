@@ -25,6 +25,6 @@ namespace miit::algebra
          * @brief Получить константное значение
          * @return Значение, переданное в конструктор
          */
-        int generate() override;
+        int generate() const override;
     };
 }
