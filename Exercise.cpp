@@ -1,4 +1,5 @@
 #include "Exercise.h"
+#include <stdexcept>
 #include <utility>
 
 miit::algebra::Exercise::Exercise(Matrix<int> matrix, const Generator* generator)
