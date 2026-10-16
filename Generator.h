@@ -6,7 +6,12 @@ namespace miit::algebra
     /**
      * @brief Генератор константного значения
      */
-    class ConstGenerator : public Generator
+    class Generator
+    {
+    public:
+        virtual ~Generator() = default;
+        virtual int generate() const = 0;
+    };
     {
     private:
         /**
