@@ -61,7 +61,7 @@ namespace miit
              * @param cols количество столбцов
              * @param gen Генератор, который выдаёт значения.
              */
-            Matrix(const size_t rows, const size_t cols, Generator& gen);
+            Matrix(const size_t rows, const size_t cols, const Generator& gen);
 
 
             /**
@@ -130,7 +130,7 @@ namespace miit
              * @brief Заполнить матрицу с помощью генератора
              * @param gen ссылка на генератор значений
              */
-            void fill(Generator& gen);
+            void fill(const Generator& gen);
 
             /**
              * @brief Получить количество строк
@@ -205,7 +205,7 @@ namespace miit
         }
 
         template <typename T>
-        Matrix<T>::Matrix(const size_t rows, const size_t cols, Generator& gen)
+        Matrix<T>::Matrix(const size_t rows, const size_t cols, const Generator& gen)
             : rows(rows), cols(cols), data(rows, std::vector<T>(cols, T{}))
         {
             fill(gen);
@@ -259,7 +259,7 @@ namespace miit
         }
 
         template <typename T>
-        void Matrix<T>::fill(Generator& gen)
+        void Matrix<T>::fill(const Generator& gen)
         {
             for (size_t i = 0; i < rows; ++i)
             {
