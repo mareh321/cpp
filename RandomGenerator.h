@@ -13,12 +13,12 @@ namespace miit::algebra
         /**
          * @brief Генератор случайных чисел Mersenne Twister
          */
-        std::mt19937 generator;
+        mutable std::mt19937 generator;
 
         /**
          * @brief Равномерное целочисленное распределение
          */
-        std::uniform_int_distribution<int> distribution;
+        mutable std::uniform_int_distribution<int> distribution;
 
     public:
         /**
