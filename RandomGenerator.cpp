@@ -11,7 +11,7 @@ miit::algebra::RandomGenerator::RandomGenerator(const int min, const int max)
     this->distribution = std::uniform_int_distribution<int>(min, max);
 }
 
-int miit::algebra::RandomGenerator::generate()
+int miit::algebra::RandomGenerator::generate() const
 {
     return this->distribution(this->generator);
 }
