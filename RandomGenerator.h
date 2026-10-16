@@ -33,6 +33,6 @@ namespace miit::algebra
          * @brief Сгенерировать случайное число в заданном диапазоне
          * @return Сгенерированное случайное число
          */
-        int generate() cosnt override;
+        int generate() const override;
     };
 }
