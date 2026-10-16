@@ -80,7 +80,7 @@ namespace miit
              * @brief Получить используемый генератор
              * @return указатель на генератор
              */
-            const Generator* getGenerator() const noexcept;
+            const Generator& getGenerator() const;
 
             /**
              * @brief Установить новый генератор
