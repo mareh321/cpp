@@ -7,7 +7,7 @@ namespace miit
     namespace algebra
     {
         /**
-         * @brief Задача 2 (Вариант 8): Вставить после всех строк, содержащих максимальный по модулю элемент, первую строку
+         * @brief Задача 2 (вариант 8): вставить первую строку после строк с элементом наибольшего модуля.
          */
         class Task2 : public Exercise
         {
@@ -20,15 +20,16 @@ namespace miit
             explicit Task2(Matrix<int> matrix, const Generator* generator = nullptr);
 
             /**
-             * @brief Конструктор задачи с генерацией матрицы
+             * @brief Создаёт задачу и заполняет матрицу значениями генератора.
              * @param rows количество строк
              * @param cols количество столбцов
-             * @param generator генератор значений для матрицы
+             * @param generator генератор значений; при выдаче чисел он меняет своё состояние
              */
-            Task2(const size_t rows, const size_t cols, const Generator& generator);
+            Task2(const size_t rows, const size_t cols, Generator& generator);
 
             /**
-             * @brief Выполнить вставку первой строки после строк, содержащих максимальный по модулю элемент
+             * @brief Вставляет копию первой строки после каждой строки, содержащей элемент
+             * с наибольшим модулем во всей матрице.
              */
             void solve() override;
 
