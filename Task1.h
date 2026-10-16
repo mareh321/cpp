@@ -7,7 +7,7 @@ namespace miit
     namespace algebra
     {
         /**
-         * @brief Задача 1 (Вариант 8): Заменить максимальный элемент каждого столбца нулем
+         * @brief Задача 1 (вариант 8): заменить максимальные элементы столбцов нулём.
          */
         class Task1 : public Exercise
         {
@@ -20,15 +20,16 @@ namespace miit
             explicit Task1(Matrix<int> matrix, const Generator* generator = nullptr);
 
             /**
-             * @brief Конструктор задачи с генерацией матрицы
+             * @brief Создаёт задачу и заполняет матрицу значениями генератора.
              * @param rows количество строк
              * @param cols количество столбцов
-             * @param generator генератор значений для матрицы
+             * @param generator генератор значений; при выдаче чисел он меняет своё состояние
              */
-            Task1(const size_t rows, const size_t cols, const Generator& generator);
+            Task1(const size_t rows, const size_t cols, Generator& generator);
 
             /**
-             * @brief Заменить максимальный элемент каждого столбца нулем
+             * @brief Заменяет нулём все максимальные элементы в каждом столбце.
+             * При совпадении максимумов обнуляются все такие элементы.
              */
             void solve() override;
 
