@@ -67,39 +67,43 @@ int main()
     int inputChoice = 0;
     std::unique_ptr<Generator> gen;
 
-    while (std::cin >> inputChoice)
+    if (!(std::cin >> inputChoice))
+    {
+        std::cerr << "Не удалось прочитать выбор способа заполнения.\n";
+        return 1;
+    }
+
+    int minV = 0;
+    int maxV = 0;
+    std::cout << "Введите минимальное значение диапазона (min): ";
+    std::cin >> minV;
+    std::cout << "Введите максимальное значение диапазона (max): ";
+    std::cin >> maxV;
+    if (minV > maxV)
     {
         Choice choice = static_cast<Choice>(inputChoice);
         if (choice == Choice::Random)
         {
-            int minV = 0;
-            int maxV = 0;
-            std::cout << "Введите минимальное значение диапазона (min): ";
-            std::cin >> minV;
-            std::cout << "Введите максимальное значение диапазона (max): ";
-            std::cin >> maxV;
-            if (minV > maxV)
-            {
-                std::swap(minV, maxV);
-            }
-            gen = std::make_unique<RandomGenerator>(minV, maxV);
-            break;
+            std::swap(minV, maxV);
         }
-        else if (choice == Choice::Keyboard)
-        {
-            gen = std::make_unique<IStreamGenerator>(std::cin);
-            std::cout << "Введите " << (n * m) << " целых чисел:\n";
-            break;
-        }
-        else if (choice == Choice::Constant)
-        {
-            int value = 0;
-            std::cout << "Введите константное значение: ";
-            std::cin >> value;
-            gen = std::make_unique<ConstGenerator>(value);
-            break;
-        }
-        std::cout << "Неверный выбор. Введите 1, 2 или 3: ";
+        gen = std::make_unique<RandomGenerator>(minV, maxV);
+    }
+    else if (choice == Choice::Keyboard)
+    {
+        gen = std::make_unique<IStreamGenerator>(std::cin);
+        std::cout << "Введите " << (n * m) << " целых чисел:\n";
+    }
+    else if (choice == Choice::Constant)
+    {
+        int value = 0;
+        std::cout << "Введите константное значение: ";
+        std::cin >> value;
+        gen = std::make_unique<ConstGenerator>(value);
+    }
+    else
+    {
+        std::cerr << "Неверный выбор. Введите 1, 2 или 3.\n";
+        return 1;
     }
 
     if (!gen)
