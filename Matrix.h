@@ -1,3 +1,4 @@
+// Матрица хранит значения по строкам и столбцам; ниже описаны основные операции.
 #pragma once
 #include <vector>
 #include <string>
@@ -11,64 +12,57 @@ namespace miit
     namespace algebra
     {
         /**
-         * @brief Шаблонный класс двумерного массива (матрицы)
-         * @tparam T тип хранимых элементов
+         * @brief Матрица с элементами типа T.
+         * @tparam T Тип значений, которые будут храниться в матрице.
          */
         template <typename T>
         class Matrix
         {
         private:
             /** 
-             * @brief Внутреннее хранилище элементов (вектор строк)
+             * @brief Здесь лежат строки матрицы, каждая в виде отдельного вектора.
              */
             std::vector<std::vector<T>> data;
 
             /**
-             * @brief Количество строк
+             * @brief Сколько строк сейчас в матрице.
              */
             size_t rows;
 
             /**
-             * @brief Количество столбцов
+             * @brief Сколько элементов находится в каждой строке.
              */
             size_t cols;
 
         public:
             /**
-             * @brief Конструктор по умолчанию (создает пустую матрицу 0x0)
+             * @brief Создаёт пустую матрицу размером 0 на 0.
              */
             Matrix() noexcept;
 
             /**
-             * @brief Конструктор с заданными размерами (инициализирует элементы значением по умолчанию T{})
-             * @param rows количество строк
-             * @param cols количество столбцов
+             * @brief Создаёт матрицу нужного размера и заполняет её значениями T{}.
+             * @param rows Число строк.
+             * @param cols Число столбцов.
              */
             Matrix(const size_t rows, const size_t cols);
 
             /**
-             * @brief Конструктор с заданными размерами и начальным значением элементов
+             * @brief Создаёт матрицу и заполняет все ячейки одним значением.
              * @param rows количество строк
              * @param cols количество столбцов
-             * @param value значение для заполнения всех элементов матрицы
+             * @param value Значение для каждой ячейки.
              */
             Matrix(const size_t rows, const size_t cols, const T& value);
 
             /**
-             * @brief Конструктор с заданными размерами и заполнением с помощью генератора
+             * @brief Создаёт матрицу и получает значения у генератора.
              * @param rows количество строк
              * @param cols количество столбцов
-             * @param gen генератор для формирования элементов
+             * @param gen Генератор, который выдаёт значения.
              */
             Matrix(const size_t rows, const size_t cols, Generator& gen);
 
-            /**
-             * @brief Конструктор с заданными размерами и заполнением с помощью константного генератора
-             * @param rows количество строк
-             * @param cols количество столбцов
-             * @param gen константная ссылка на генератор
-             */
-            Matrix(const size_t rows, const size_t cols, const Generator& gen);
 
             /**
              * @brief Конструктор копирования
@@ -102,15 +96,16 @@ namespace miit
             Matrix& operator=(Matrix&& other) noexcept = default;
 
             /**
-             * @brief Оператор доступа к строке матрицы по индексу (неконстантный)
+             * @brief Возвращает строку по индексу, её элементы можно менять.
              * @param index индекс строки (0 .. rows - 1)
              * @return ссылка на вектор элементов строки
              * @throw std::out_of_range при выходе индекса за границы
+             * @note Не меняйте размер возвращённого вектора: все строки должны иметь cols элементов.
              */
             std::vector<T>& operator[](const size_t index);
 
             /**
-             * @brief Оператор доступа к строке матрицы по индексу (константный)
+             * @brief Возвращает строку по индексу без возможности её изменить.
              * @param index индекс строки (0 .. rows - 1)
              * @return константная ссылка на вектор элементов строки
              * @throw std::out_of_range при выходе индекса за границы
@@ -118,14 +113,14 @@ namespace miit
             const std::vector<T>& operator[](const size_t index) const;
 
             /**
-             * @brief Оператор сдвига влево (удаление первых shift строк матрицы)
+             * @brief Удаляет первые shift строк.
              * @param shift количество удаляемых верхних строк
              * @return ссылка на текущий объект
              */
             Matrix& operator<<(const size_t shift);
 
             /**
-             * @brief Оператор сдвига вправо (добавление shift пустых/нулевых строк в начало матрицы)
+             * @brief Добавляет в начало shift строк, заполненных значениями по умолчанию.
              * @param shift количество добавляемых верхних строк
              * @return ссылка на текущий объект
              */
@@ -136,12 +131,6 @@ namespace miit
              * @param gen ссылка на генератор значений
              */
             void fill(Generator& gen);
-
-            /**
-             * @brief Заполнить матрицу с помощью константного генератора
-             * @param gen константная ссылка на генератор значений
-             */
-            void fill(const Generator& gen);
 
             /**
              * @brief Получить количество строк
@@ -162,15 +151,17 @@ namespace miit
             bool empty() const noexcept { return rows == 0 || cols == 0; }
 
             /**
-             * @brief Представление матрицы в виде форматированной строки
+             * @brief Собирает матрицу в строку, чтобы её было удобно вывести.
              * @return строка вида "[ a, b ]\n[ c, d ]" (или пустая строка для пустой матрицы)
              */
             std::string toString() const;
 
             /**
-             * @brief Вставить строку после указанной позиции
+             * @brief Вставляет новую строку сразу после указанной позиции.
              * @param pos индекс строки, после которой выполняется вставка (0 .. rows - 1)
-             * @param row вектор значений для вставки
+             * @param row строка из cols элементов
+             * @throw std::out_of_range если pos не указывает на существующую строку
+             * @throw std::invalid_argument если в row не ровно cols элементов
              */
             void insertRow(const size_t pos, const std::vector<T>& row);
 
@@ -215,13 +206,6 @@ namespace miit
 
         template <typename T>
         Matrix<T>::Matrix(const size_t rows, const size_t cols, Generator& gen)
-            : rows(rows), cols(cols), data(rows, std::vector<T>(cols, T{}))
-        {
-            fill(gen);
-        }
-
-        template <typename T>
-        Matrix<T>::Matrix(const size_t rows, const size_t cols, const Generator& gen)
             : rows(rows), cols(cols), data(rows, std::vector<T>(cols, T{}))
         {
             fill(gen);
@@ -287,12 +271,6 @@ namespace miit
         }
 
         template <typename T>
-        void Matrix<T>::fill(const Generator& gen)
-        {
-            fill(const_cast<Generator&>(gen));
-        }
-
-        template <typename T>
         std::string Matrix<T>::toString() const
         {
             if (rows == 0 || cols == 0)
@@ -326,7 +304,11 @@ namespace miit
         {
             if (pos >= rows)
             {
-                return;
+                throw std::out_of_range("Matrix row position out of range");
+            }
+            if (row.size() != cols)
+            {
+                throw std::invalid_argument("Inserted row has incorrect size");
             }
             data.insert(data.begin() + pos + 1, row);
             ++rows;
