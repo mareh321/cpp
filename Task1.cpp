@@ -6,7 +6,7 @@ miit::algebra::Task1::Task1(Matrix<int> matrix)
 {
 }
 
-miit::algebra::Task1::Task1(const size_t rows, const size_t cols, Generator& generator)
+miit::algebra::Task1::Task1(const size_t rows, const size_t cols,const Generator& generator)
     : Exercise(rows, cols, generator)
 {
 }
