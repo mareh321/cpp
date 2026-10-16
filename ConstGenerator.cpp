@@ -5,7 +5,7 @@ miit::algebra::ConstGenerator::ConstGenerator(const int value)
 {
 }
 
-int miit::algebra::ConstGenerator::generate()
+int miit::algebra::ConstGenerator::generate() const
 {
     return this->value;
 }
