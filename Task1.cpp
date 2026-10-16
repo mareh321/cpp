@@ -2,7 +2,12 @@
 #include <utility>
 
 miit::algebra::Task1::Task1(Matrix<int> matrix)
-    : Exercise(std::move(matrix), generator)
+    : Exercise(std::move(matrix))
+{
+}
+
+miit::algebra::Task1::Task1(Matrix<int> matrix, const Generator& generator)
+    : Exercise(std::move(matrix), &generator)
 {
 }
 
