@@ -32,6 +32,6 @@ namespace miit::algebra
          * @return Считанное целое число
          * @throw std::runtime_error при ошибке чтения из потока
          */
-        int generate() override;
+        int generate() const override;
     };
 }
