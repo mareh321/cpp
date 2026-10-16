@@ -1,7 +1,7 @@
 #include "Task1.h"
 #include <utility>
 
-miit::algebra::Task1::Task1(Matrix<int> matrix, const Generator* generator)
+miit::algebra::Task1::Task1(Matrix<int> matrix)
     : Exercise(std::move(matrix), generator)
 {
 }
