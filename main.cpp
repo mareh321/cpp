@@ -73,16 +73,16 @@ int main()
         return 1;
     }
 
-    int minV = 0;
-    int maxV = 0;
-    std::cout << "Введите минимальное значение диапазона (min): ";
-    std::cin >> minV;
-    std::cout << "Введите максимальное значение диапазона (max): ";
-    std::cin >> maxV;
-    if (minV > maxV)
+    Choice choice = static_cast<Choice>(inputChoice);
+    if (choice == Choice::Random)
     {
-        Choice choice = static_cast<Choice>(inputChoice);
-        if (choice == Choice::Random)
+        int minV = 0;
+        int maxV = 0;
+        std::cout << "Введите минимальное значение диапазона (min): ";
+        std::cin >> minV;
+        std::cout << "Введите максимальное значение диапазона (max): ";
+        std::cin >> maxV;
+        if (minV > maxV)
         {
             std::swap(minV, maxV);
         }
