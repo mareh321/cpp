@@ -6,7 +6,7 @@ miit::algebra::Exercise::Exercise(Matrix<int> matrix, const Generator* generator
 {
 }
 
-miit::algebra::Exercise::Exercise(const size_t rows, const size_t cols, const Generator& generator)
+miit::algebra::Exercise::Exercise(const size_t rows, const size_t cols, Generator& generator)
     : matrix(rows, cols, generator), generator(&generator)
 {
 }
