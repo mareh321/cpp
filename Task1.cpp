@@ -6,7 +6,7 @@ miit::algebra::Task1::Task1(Matrix<int> matrix, const Generator* generator)
 {
 }
 
-miit::algebra::Task1::Task1(const size_t rows, const size_t cols, const Generator& generator)
+miit::algebra::Task1::Task1(const size_t rows, const size_t cols, Generator& generator)
     : Exercise(rows, cols, generator)
 {
 }
@@ -21,7 +21,7 @@ void miit::algebra::Task1::solve()
     const size_t rows = this->matrix.getRows();
     const size_t cols = this->matrix.getCols();
 
-    // Для каждого столбца находим максимальный элемент и заменяем его нулем
+    // Идём по столбцам и обнуляем наибольший элемент в каждом.
     for (size_t j = 0; j < cols; ++j)
     {
         int maxVal = this->matrix[0][j];
