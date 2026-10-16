@@ -1,22 +1,30 @@
 #pragma once
+#include "Generator.h"
 
 namespace miit::algebra
 {
     /**
-     * @brief Абстрактный базовый класс генератора значений
+     * @brief Генератор константного значения
      */
-    class Generator
+    class ConstGenerator : public Generator
     {
+    private:
+        /**
+         * @brief Значение, которое генератор возвращает при каждом вызове.
+         */
+        const int value;
+
     public:
         /**
-         * @brief Виртуальный деструктор
+         * @brief Конструктор
+         * @param value Значение, которое возвращает генератор
          */
-        virtual ~Generator() = default;
+        explicit ConstGenerator(const int value);
 
         /**
-         * @brief Сгенерировать очередное целое число
-         * @return Сгенерированное значение
+         * @brief Получить константное значение
+         * @return Значение, переданное в конструктор
          */
-        virtual int generate() = 0;
+        int generate() override;
     };
 }
