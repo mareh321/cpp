@@ -8,21 +8,21 @@ namespace miit
     namespace algebra
     {
         /**
-         * @brief Абстрактный базовый класс упражнения (задачи) над матрицей
-         * 
-         * В соответствии с принципами ООП агрегирует класс Matrix<int> и Generator,
-         * предоставляя единый интерфейс и общее состояние для конкретных задач (Task1, Task2).
+         * @brief Общая основа для задач, которые работают с матрицей.
+         *
+         * Здесь хранится матрица и, если он нужен, указатель на генератор.
+         * Конкретные задачи задают свои способы решения и описание.
          */
         class Exercise
         {
         protected:
             /**
-             * @brief Матрица, с которой работает упражнение
+             * @brief Матрица, которую будет обрабатывать задача.
              */
             Matrix<int> matrix;
 
             /**
-             * @brief Указатель на генератор (агрегация, внешнее владение)
+             * @brief Генератор значений. Сам объект принадлежит вызывающему коду.
              */
             const Generator* generator;
 
@@ -35,12 +35,12 @@ namespace miit
             explicit Exercise(Matrix<int> matrix, const Generator* generator = nullptr);
 
             /**
-             * @brief Конструктор с инициализацией матрицы через генератор
+             * @brief Создаёт матрицу и заполняет её значениями генератора.
              * @param rows количество строк
              * @param cols количество столбцов
-             * @param generator генератор значений для матрицы
+             * @param generator генератор значений, который меняет своё состояние при выдаче чисел
              */
-            Exercise(const size_t rows, const size_t cols, const Generator& generator);
+            Exercise(const size_t rows, const size_t cols, Generator& generator);
 
             /**
              * @brief Виртуальный деструктор
@@ -48,24 +48,24 @@ namespace miit
             virtual ~Exercise() = default;
 
             /**
-             * @brief Решить задачу (чисто виртуальный метод)
+             * @brief Выполняет задачу; реализация есть в классах-наследниках.
              */
             virtual void solve() = 0;
 
             /**
-             * @brief Получить текстовое описание задачи (чисто виртуальный метод)
+             * @brief Возвращает короткое описание задачи.
              * @return строка с описанием
              */
             virtual std::string description() const = 0;
 
             /**
-             * @brief Получить константную ссылку на матрицу
+             * @brief Даёт доступ к матрице без возможности её изменить.
              * @return константная ссылка на матрицу
              */
             const Matrix<int>& getMatrix() const noexcept;
 
             /**
-             * @brief Получить неконстантную ссылку на матрицу
+             * @brief Даёт доступ к матрице для изменения.
              * @return ссылка на матрицу
              */
             Matrix<int>& getMatrix() noexcept;
