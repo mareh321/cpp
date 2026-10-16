@@ -24,6 +24,10 @@ miit::algebra::Matrix<int>& miit::algebra::Exercise::getMatrix() noexcept
 
 void miit::algebra::Exercise::setMatrix(Matrix<int> newMatrix)
 {
+        if (this->generator == nullptr)
+    {
+        throw std::logic_error("Exercise has no generator");
+    }
     this->matrix = std::move(newMatrix);
 }
 
