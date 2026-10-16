@@ -7,7 +7,7 @@ miit::algebra::Exercise::Exercise(Matrix<int> matrix, const Generator* generator
 {
 }
 
-miit::algebra::Exercise::Exercise(const size_t rows, const size_t cols, Generator& generator)
+miit::algebra::Exercise::Exercise(const size_t rows, const size_t cols, const Generator& generator)
     : matrix(rows, cols, generator), generator(&generator)
 {
 }
@@ -27,9 +27,9 @@ void miit::algebra::Exercise::setMatrix(Matrix<int> newMatrix)
     this->matrix = std::move(newMatrix);
 }
 
-const miit::algebra::Generator* miit::algebra::Exercise::getGenerator() const noexcept
+const miit::algebra::Generator& miit::algebra::Exercise::getGenerator() const
 {
-    return this->generator;
+    return *this->generator;
 }
 
 void miit::algebra::Exercise::setGenerator(const Generator* gen) noexcept
