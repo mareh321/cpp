@@ -40,7 +40,7 @@ namespace miit
              * @param cols количество столбцов
              * @param generator генератор значений, который меняет своё состояние при выдаче чисел
              */
-            Exercise(const size_t rows, const size_t cols, Generator& generator);
+            Exercise(const size_t rows, const size_t cols, const Generator& generator);
 
             /**
              * @brief Виртуальный деструктор
