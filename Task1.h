@@ -15,11 +15,8 @@ namespace miit
             /**
              * @brief Конструктор задачи с передачей готовой матрицы
              * @param matrix матрица, с которой работаем
-             * @param generator указатель на генератор (необязательный)
              */
             explicit Task1(Matrix<int> matrix);
-
-            Task1(Matrix<int> matrix, const Generator& generator);
 
             /**
              * @brief Создаёт задачу и заполняет матрицу значениями генератора.
