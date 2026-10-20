@@ -16,11 +16,6 @@ miit::algebra::Task2::Task2(Matrix<int> matrix)
 {
 }
 
-miit::algebra::Task2::Task2(Matrix<int> matrix, const Generator& generator)
-    : Exercise(std::move(matrix), &generator)
-{
-}
-
 miit::algebra::Task2::Task2(const size_t rows, const size_t cols, const Generator& generator)
     : Exercise(rows, cols, generator)
 {
