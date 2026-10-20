@@ -10,7 +10,7 @@ namespace miit
         /**
          * @brief Общая основа для задач, которые работают с матрицей.
          *
-         * Здесь хранится матрица и, если он нужен, указатель на генератор.
+         * Здесь хранится матрица.
          * Конкретные задачи задают свои способы решения и описание.
          */
         class Exercise
@@ -21,18 +21,12 @@ namespace miit
              */
             Matrix<int> matrix;
 
-            /**
-             * @brief Генератор значений. Сам объект принадлежит вызывающему коду.
-             */
-            const Generator* generator;
-
         public:
             /**
              * @brief Конструктор с готовой матрицей
              * @param matrix матрица целых чисел
-             * @param generator указатель на генератор значений (необязательный)
              */
-            explicit Exercise(Matrix<int> matrix, const Generator* generator = nullptr);
+            explicit Exercise(Matrix<int> matrix);
 
             /**
              * @brief Создаёт матрицу и заполняет её значениями генератора.
@@ -76,17 +70,6 @@ namespace miit
              */
             void setMatrix(Matrix<int> newMatrix);
 
-            /**
-             * @brief Получить используемый генератор
-             * @return указатель на генератор
-             */
-            const Generator& getGenerator() const;
-
-            /**
-             * @brief Установить новый генератор
-             * @param gen указатель на новый генератор
-             */
-            void setGenerator(const Generator* gen) noexcept;
         };
     }
 }
