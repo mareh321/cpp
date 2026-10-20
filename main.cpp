@@ -119,13 +119,13 @@ int main()
               << matrix.toString() << "\n\n";
 
     // Демонстрация работы Задачи 1 (через полиморфизм абстрактного класса Exercise)
-    std::unique_ptr<Exercise> task1 = std::make_unique<Task1>(matrix, *gen);
+    std::unique_ptr<Exercise> task1 = std::make_unique<Task1>(matrix);
     std::cout << "Задача 1: " << task1->description() << "\n";
     task1->solve();
     std::cout << "Результат Задачи 1:\n" << task1->getMatrix().toString() << "\n\n";
 
     // Демонстрация работы Задачи 2 (через полиморфизм абстрактного класса Exercise)
-    std::unique_ptr<Exercise> task2 = std::make_unique<Task2>(matrix, *gen);
+    std::unique_ptr<Exercise> task2 = std::make_unique<Task2>(matrix);
     std::cout << "Задача 2: " << task2->description() << "\n";
     task2->solve();
     std::cout << "Результат Задачи 2:\n" << task2->getMatrix().toString() << "\n\n";
