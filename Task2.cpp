@@ -45,10 +45,9 @@ void miit::algebra::Task2::solve()
         }
     }
 
-    // Сохраняем первую строку: именно её нужно добавлять после найденных строк.
-    std::vector<int> firstRow = this->matrix[0];
 
-    // Идём с конца, чтобы вставленные строки не сдвигали ещё не проверенные индексы.
+    std::vector<int> firstRow = this->matrix.getRow(0);
+
     for (size_t i = initialRows; i-- > 0; )
     {
         bool hasMaxAbs = false;
