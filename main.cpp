@@ -71,8 +71,10 @@ int main()
         return 1;
     }
 
-    Choice choice = static_cast<Choice>(inputChoice);
-    if (choice == Choice::Random)
+    const Choice choice = static_cast<Choice>(inputChoice);
+    switch (choice)
+    {
+    case Choice::Random:
     {
         int minV = 0;
         int maxV = 0;
@@ -86,23 +88,25 @@ int main()
         }
         RandomGenerator randomGenerator(minV, maxV);
         matrix.fill(randomGenerator);
+        break;
     }
-    else if (choice == Choice::Keyboard)
+    case Choice::Keyboard:
     {
         IStreamGenerator streamGenerator(std::cin);
         std::cout << "Введите " << (n * m) << " целых чисел:\n";
         matrix.fill(streamGenerator);
+        break;
     }
-    else if (choice == Choice::Constant)
+    case Choice::Constant:
     {
         int value = 0;
         std::cout << "Введите константное значение: ";
         std::cin >> value;
         ConstGenerator constGenerator(value);
         matrix.fill(constGenerator);
+        break;
     }
-    else
-    {
+    default:
         std::cerr << "Неверный выбор. Введите 1, 2 или 3.\n";
         return 1;
     }
