@@ -1,12 +1,10 @@
 #include <iostream>
-#include <memory>
 #include <clocale>
 #include <utility>
 #include "Matrix.h"
 #include "RandomGenerator.h"
 #include "IStreamGenerator.h"
 #include "ConstGenerator.h"
-#include "Exercise.h"
 #include "Task1.h"
 #include "Task2.h"
 
@@ -52,7 +50,7 @@ int main()
     std::setlocale(LC_ALL, "Russian");
 
     std::cout << "========================================================\n";
-    std::cout << "  Лабораторная работа 4.3 (ООП стиль) - Вариант 8 (24)  \n";
+    std::cout << "  Лабораторная работа 4.3  - Вариант 8 (24)  \n";
     std::cout << "========================================================\n\n";
 
     const size_t n = readSize("Введите количество строк матрицы n: ");
@@ -65,7 +63,7 @@ int main()
               << "Ваш выбор: ";
 
     int inputChoice = 0;
-    std::unique_ptr<Generator> gen;
+    Matrix<int> matrix(n, m);
 
     if (!(std::cin >> inputChoice))
     {
@@ -86,19 +84,22 @@ int main()
         {
             std::swap(minV, maxV);
         }
-        gen = std::make_unique<RandomGenerator>(minV, maxV);
+        RandomGenerator randomGenerator(minV, maxV);
+        matrix.fill(randomGenerator);
     }
     else if (choice == Choice::Keyboard)
     {
-        gen = std::make_unique<IStreamGenerator>(std::cin);
+        IStreamGenerator streamGenerator(std::cin);
         std::cout << "Введите " << (n * m) << " целых чисел:\n";
+        matrix.fill(streamGenerator);
     }
     else if (choice == Choice::Constant)
     {
         int value = 0;
         std::cout << "Введите константное значение: ";
         std::cin >> value;
-        gen = std::make_unique<ConstGenerator>(value);
+        ConstGenerator constGenerator(value);
+        matrix.fill(constGenerator);
     }
     else
     {
@@ -106,29 +107,20 @@ int main()
         return 1;
     }
 
-    if (!gen)
-    {
-        std::cerr << "Не удалось прочитать выбор способа заполнения.\n";
-        return 1;
-    }
-
-    // Создание и заполнение матрицы через генератор
-    Matrix<int> matrix(n, m, *gen);
-
     std::cout << "\nИсходная матрица (" << matrix.getRows() << "x" << matrix.getCols() << "):\n"
               << matrix.toString() << "\n\n";
 
-    // Демонстрация работы Задачи 1 (через полиморфизм абстрактного класса Exercise)
-    std::unique_ptr<Exercise> task1 = std::make_unique<Task1>(matrix);
-    std::cout << "Задача 1: " << task1->description() << "\n";
-    task1->solve();
-    std::cout << "Результат Задачи 1:\n" << task1->getMatrix().toString() << "\n\n";
+    // Задача 1
+    Task1 task1(matrix);
+    std::cout << "Задача 1: " << task1.description() << "\n";
+    task1.solve();
+    std::cout << "Результат Задачи 1:\n" << task1.getMatrix().toString() << "\n\n";
 
-    // Демонстрация работы Задачи 2 (через полиморфизм абстрактного класса Exercise)
-    std::unique_ptr<Exercise> task2 = std::make_unique<Task2>(matrix);
-    std::cout << "Задача 2: " << task2->description() << "\n";
-    task2->solve();
-    std::cout << "Результат Задачи 2:\n" << task2->getMatrix().toString() << "\n\n";
+    // Задача 2
+    Task2 task2(matrix);
+    std::cout << "Задача 2: " << task2.description() << "\n";
+    task2.solve();
+    std::cout << "Результат Задачи 2:\n" << task2.getMatrix().toString() << "\n\n";
 
     // Демонстрация перегруженных операторов класса Matrix
     std::cout << "--- Демонстрация операторов сдвига матрицы ---\n";
