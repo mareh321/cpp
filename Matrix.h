@@ -35,6 +35,45 @@ namespace miit
 
         public:
             /**
+             * @brief Доступ к элементам строки без возможности изменить её длину.
+             */
+            class RowProxy
+            {
+            private:
+                std::vector<T>& row;
+
+            public:
+                explicit RowProxy(std::vector<T>& row) noexcept : row(row) {}
+
+                typename std::vector<T>::reference operator[](const size_t col)
+                {
+                    return row.at(col);
+                }
+
+                typename std::vector<T>::const_reference operator[](const size_t col) const
+                {
+                    return static_cast<const std::vector<T>&>(row).at(col);
+                }
+            };
+
+            /**
+             * @brief Доступ к элементам строки только для чтения.
+             */
+            class ConstRowProxy
+            {
+            private:
+                const std::vector<T>& row;
+
+            public:
+                explicit ConstRowProxy(const std::vector<T>& row) noexcept : row(row) {}
+
+                typename std::vector<T>::const_reference operator[](const size_t col) const
+                {
+                    return row.at(col);
+                }
+            };
+
+            /**
              * @brief Создаёт пустую матрицу размером 0 на 0.
              */
             Matrix() noexcept;
@@ -73,7 +112,7 @@ namespace miit
              * @brief Конструктор перемещения
              * @param other rvalue-ссылка на перемещаемую матрицу
              */
-            Matrix(Matrix&& other) noexcept = default;
+            Matrix(Matrix&& other) noexcept;
 
             /**
              * @brief Деструктор
@@ -92,24 +131,31 @@ namespace miit
              * @param other rvalue-ссылка на перемещаемую матрицу
              * @return ссылка на текущий объект
              */
-            Matrix& operator=(Matrix&& other) noexcept = default;
+            Matrix& operator=(Matrix&& other) noexcept;
 
             /**
-             * @brief Возвращает строку по индексу, её элементы можно менять.
+             * @brief Даёт доступ к элементам строки для изменения.
              * @param index индекс строки (0 .. rows - 1)
-             * @return ссылка на вектор элементов строки
-             * @throw std::out_of_range при выходе индекса за границы
-             * @note Не меняйте размер возвращённого вектора: все строки должны иметь cols элементов.
+             * @return объект для доступа к элементам без изменения длины строки
+             * @throw std::out_of_range при выходе индекса строки или столбца за границы
              */
-            std::vector<T>& operator[](const size_t index);
+            RowProxy operator[](const size_t index);
 
             /**
-             * @brief Возвращает строку по индексу без возможности её изменить.
+             * @brief Даёт доступ к элементам строки только для чтения.
              * @param index индекс строки (0 .. rows - 1)
-             * @return константная ссылка на вектор элементов строки
+             * @return объект для чтения элементов строки
+             * @throw std::out_of_range при выходе индекса строки или столбца за границы
+             */
+            ConstRowProxy operator[](const size_t index) const;
+
+            /**
+             * @brief Копирует строку матрицы.
+             * @param index индекс строки
+             * @return копия строки
              * @throw std::out_of_range при выходе индекса за границы
              */
-            const std::vector<T>& operator[](const size_t index) const;
+            std::vector<T> getRow(const size_t index) const;
 
             /**
              * @brief Удаляет первые shift строк.
@@ -211,17 +257,51 @@ namespace miit
         }
 
         template <typename T>
-        std::vector<T>& Matrix<T>::operator[](const size_t index)
+        Matrix<T>::Matrix(Matrix&& other) noexcept
+            : data(std::move(other.data)), rows(other.rows), cols(other.cols)
+        {
+            other.data.clear();
+            other.rows = 0;
+            other.cols = 0;
+        }
+
+        template <typename T>
+        Matrix<T>& Matrix<T>::operator=(Matrix&& other) noexcept
+        {
+            if (this != &other)
+            {
+                data = std::move(other.data);
+                rows = other.rows;
+                cols = other.cols;
+                other.data.clear();
+                other.rows = 0;
+                other.cols = 0;
+            }
+            return *this;
+        }
+
+        template <typename T>
+        typename Matrix<T>::RowProxy Matrix<T>::operator[](const size_t index)
         {
             if (index >= rows)
             {
                 throw std::out_of_range("Matrix row index out of range");
             }
-            return data[index];
+            return RowProxy(data[index]);
         }
 
         template <typename T>
-        const std::vector<T>& Matrix<T>::operator[](const size_t index) const
+        typename Matrix<T>::ConstRowProxy Matrix<T>::operator[](const size_t index) const
+        {
+            if (index >= rows)
+            {
+                throw std::out_of_range("Matrix row index out of range");
+            }
+            return ConstRowProxy(data[index]);
+        }
+
+        template <typename T>
+        std::vector<T> Matrix<T>::getRow(const size_t index) const
         {
             if (index >= rows)
             {
