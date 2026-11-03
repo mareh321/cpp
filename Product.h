@@ -16,6 +16,10 @@ namespace miit::bakery
         Product(const std::string& name, const Money price, const Quantity weightGrams);
     public:
         virtual ~Product() = default;
+        Product(const Product& other) = default;
+        Product& operator=(const Product& other) = default;
+        Product(Product&& other) noexcept = default;
+        Product& operator=(Product&& other) noexcept = default;
         const std::string& getName() const noexcept;
         /** @brief Цена одной штуки в копейках. */
         Money getPrice() const noexcept;
