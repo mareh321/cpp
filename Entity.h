@@ -18,10 +18,10 @@ namespace miit::bakery
         Entity();
     public:
         virtual ~Entity() = default;
-        Entity(const Entity&) = delete;
-        Entity& operator=(const Entity&) = delete;
-        Entity(Entity&&) = delete;
-        Entity& operator=(Entity&&) = delete;
+        Entity(const Entity& other) = default;
+        Entity& operator=(const Entity& other) = default;
+        Entity(Entity&& other) noexcept = default;
+        Entity& operator=(Entity&& other) noexcept = default;
         /** @brief Возвращает неизменяемый положительный ключ объекта. */
         Id getId() const noexcept;
     };
