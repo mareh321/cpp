@@ -37,10 +37,10 @@ namespace miit::bakery
     public:
         explicit Bakery(const std::string& name);
         ~Bakery() = default;
-        Bakery(const Bakery&) = delete;
-        Bakery& operator=(const Bakery&) = delete;
-        Bakery(Bakery&&) = delete;
-        Bakery& operator=(Bakery&&) = delete;
+        Bakery(const Bakery& other) = default;
+        Bakery& operator=(const Bakery& other) = default;
+        Bakery(Bakery&& other) = default;
+        Bakery& operator=(Bakery&& other) = default;
         const std::string& getName() const noexcept;
 
         /** @brief Добавляет хлеб; одинаковые названия продукции запрещены. */
