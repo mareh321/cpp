@@ -12,7 +12,7 @@ namespace miit::bakery
     {
     private:
         static Id nextId;
-        const Id id;
+        Id id;
         static Id createId();
     protected:
         Entity();
