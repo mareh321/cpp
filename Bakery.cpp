@@ -4,6 +4,7 @@
 
 namespace
 {
+     /** @brief Находит зарегистрированный объект по положительному ID или бросает исключение. */
     template <typename T>
     const T& findById(const std::deque<T>& objects, const miit::bakery::Id id)
     {
@@ -13,6 +14,7 @@ namespace
         throw std::out_of_range("Объект с таким ID не найден.");
     }
 
+     /** @brief Проверяет непустое название и отсутствие совпадений в справочнике. */
     template <typename T>
     void requireNewName(const std::deque<T>& objects, const std::string& name)
     {
@@ -21,12 +23,13 @@ namespace
             if (object.getName() == clean)
                 throw std::invalid_argument("Такое название уже зарегистрировано.");
     }
-
+    /** @brief Отклоняет период, в котором конечная дата раньше начальной. */
     void checkPeriod(const miit::bakery::Date& from, const miit::bakery::Date& to)
     {
         if (to < from) throw std::invalid_argument("Конец периода раньше начала.");
     }
 
+    /** @brief Проверяет попадание даты в период с включёнными границами. */
     bool within(const miit::bakery::Date& date, const miit::bakery::Date& from,
         const miit::bakery::Date& to)
     {
