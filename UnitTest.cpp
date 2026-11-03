@@ -4,13 +4,19 @@
 #include <set>
 #include <stdexcept>
 #include <type_traits>
+#include <utility>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace miit::bakery;
 
 static_assert(std::is_abstract_v<Product>);
-static_assert(!std::is_copy_constructible_v<Bread>);
-static_assert(!std::is_move_constructible_v<Bakery>);
+static_assert(std::is_copy_constructible_v<Bread>);
+static_assert(std::is_copy_assignable_v<Bread>);
+static_assert(std::is_copy_constructible_v<Bakery>);
+static_assert(std::is_copy_assignable_v<Bakery>);
+static_assert(std::is_move_constructible_v<Bakery>);
+static_assert(std::is_move_assignable_v<Bakery>);
+
 
 namespace BakeryTests
 {
@@ -161,6 +167,124 @@ namespace BakeryTests
             for (int i = 0; i < 200; ++i) b.addBread("Хлеб " + std::to_string(i), 100, 100, "Мука");
             Assert::IsTrue(first.getId() == key);
             Assert::AreEqual(std::string("Первый"), first.getName());
+        }
+    };
+                source.recordProduction(product, d, 7);
+                return Bakery(source);
+            }();
+            Assert::IsTrue(copied.getProduct(product).getName() == "Хлеб");
+            Assert::IsTrue(copied.getShopOrdersTotal(shop, d, d) == 11000);
+            Assert::IsTrue(copied.getIngredientTotal(supplier, ingredient, d, d) == 5000);
+            Assert::IsTrue(copied.getProducedQuantity("Хлеб", d, d) == 7);
+            const auto products = copied.getAssortment();
+            Assert::IsTrue(products.size() == 2);
+            Assert::IsTrue(products.at(1).get().toString().find("Выпечка:") == 0);
+        }
+
+        /** @brief Добавление заказов в копию не меняет исходную хлебопекарню. */
+        TEST_METHOD(CopiesOwnIndependentCollections)
+        {
+            Bakery source("Пекарня");
+            const Id p = source.addBread("Хлеб", 100, 100, "Мука").getId();
+            const Id s = source.addShop("Магазин", "Адрес").getId();
+            const Date d(2026, 11, 1);
+            source.placeShopOrder(s, d, {{p, 2}});
+            Bakery copied(source);
+            copied.placeShopOrder(s, d, {{p, 3}});
+            copied.recordProduction(p, d, 4);
+            Assert::IsTrue(source.getShopOrdersTotal(s, d, d) == 200);
+            Assert::IsTrue(copied.getShopOrdersTotal(s, d, d) == 500);
+            Assert::IsTrue(source.getProducedQuantity(d, d) == 0);
+            Assert::IsTrue(copied.getProducedQuantity(d, d) == 4);
+            Assert::IsTrue(&source.getProduct(p) != &copied.getProduct(p));
+        }
+
+        /** @brief Присваивание заменяет прежние записи вместе с их ключами и связями. */
+        TEST_METHOD(CopyAssignmentReplacesExistingData)
+        {
+            Bakery source("Исходная");
+            const Id p = source.addBread("Хлеб", 200, 100, "Мука").getId();
+            const Id s = source.addShop("Магазин", "Адрес").getId();
+            const Date d(2026, 11, 1);
+            source.placeShopOrder(s, d, {{p, 3}});
+            Bakery target("Прежняя");
+            const Id old = target.addBread("Другой хлеб", 100, 100, "Мука").getId();
+            target = source;
+            Assert::AreEqual(std::string("Исходная"), target.getName());
+            Assert::IsTrue(target.getShopOrdersTotal(s, d, d) == 600);
+            Assert::ExpectException<std::out_of_range>([&] { target.getProduct(old); });
+            Assert::IsTrue(source.getShopOrdersTotal(s, d, d) == 600);
+        }
+
+        /** @brief Самоприсваивание сохраняет содержимое объекта. */
+        TEST_METHOD(SelfCopyAssignmentPreservesData)
+        {
+            Bakery b("Пекарня");
+            const Id p = b.addBread("Хлеб", 100, 100, "Мука").getId();
+            const Date d(2026, 11, 1);
+            b.recordProduction(p, d, 5);
+            Bakery& alias = b;
+            b = alias;
+            Assert::IsTrue(b.getProducedQuantity("Хлеб", d, d) == 5);
+            Assert::IsTrue(b.getProduct(p).getPrice() == 100);
+        }
+
+        /** @brief Конструктор перемещения переносит данные; исходному объекту можно присвоить новые. */
+        TEST_METHOD(MoveConstructorPreservesReports)
+        {
+            Bakery source("Пекарня");
+            const Id p = source.addBread("Хлеб", 100, 100, "Мука").getId();
+            const Date d(2026, 11, 1);
+            source.recordProduction(p, d, 8);
+            Bakery target(std::move(source));
+            Assert::IsTrue(target.getProducedQuantity("Хлеб", d, d) == 8);
+            Assert::IsTrue(target.getProduct(p).getName() == "Хлеб");
+            source = Bakery("Новая");
+            Assert::IsTrue(source.getAssortment().empty());
+            Assert::AreEqual(std::string("Новая"), source.getName());
+        }
+
+        /** @brief Перемещающее присваивание заменяет заполненный объект. */
+        TEST_METHOD(MoveAssignmentReplacesExistingData)
+        {
+            Bakery source("Источник");
+            const Id p = source.addBread("Хлеб", 100, 100, "Мука").getId();
+            const Id s = source.addShop("Магазин", "Адрес").getId();
+            const Date d(2026, 11, 1);
+            source.placeShopOrder(s, d, {{p, 9}});
+            Bakery target("Прежняя");
+            const Id old = target.addPastry("Булка", 100, 100, "Изюм").getId();
+            target = std::move(source);
+            Assert::IsTrue(target.getShopOrdersTotal(s, d, d) == 900);
+            Assert::ExpectException<std::out_of_range>([&] { target.getProduct(old); });
+            source = Bakery("Новая");
+            Assert::IsTrue(source.getAssortment().empty());
+        }
+
+        /** @brief Копирование сущности сохраняет ID логической записи и её данные. */
+        TEST_METHOD(EntityCopiesPreserveLogicalIdentity)
+        {
+            Bread first("Первый", 100, 200, "Пшеничная");
+            Bread copy(first);
+            Assert::IsTrue(first.getId() == copy.getId());
+            Bread second("Второй", 300, 400, "Ржаная");
+            copy = second;
+            Assert::IsTrue(copy.getId() == second.getId());
+            Assert::IsTrue(copy.getPrice() == 300 && copy.getWeightGrams() == 400);
+            Assert::AreEqual(std::string("Ржаная"), copy.getFlourType());
+            Assert::IsTrue(first.getId() != second.getId());
+        }
+
+        /** @brief Новые записи в разных копиях получают различные ключи из общего счётчика. */
+        TEST_METHOD(NewRecordsStayUniqueAfterCopying)
+        {
+            Bakery source("Пекарня");
+            const Id old = source.addBread("Хлеб", 100, 100, "Мука").getId();
+            Bakery copy(source);
+            const Id first = source.addBread("Первый", 100, 100, "Мука").getId();
+            const Id second = copy.addBread("Второй", 100, 100, "Мука").getId();
+            Assert::IsTrue(first != second && first != old && second != old);
+            Assert::IsTrue(copy.getProduct(old).getId() == source.getProduct(old).getId());
         }
     };
 
