@@ -10,8 +10,11 @@ namespace miit::bakery
     class Date
     {
     private:
+        /** @brief Год от 1 до 9999. */
         int year;
+        /** @brief Номер месяца от 1 до 12. */
         int month;
+        /** @brief День месяца с учётом числа дней и високосного года. */
         int day;
     public:
         /**
