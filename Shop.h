@@ -4,7 +4,7 @@
 
 namespace miit::bakery
 {
-    /** @brief Магазин, заказывающий готовую продукцию. */
+    /** @brief Заказ магазина из одной или нескольких различных позиций. */
     class Shop final : public Entity
     {
     private:
