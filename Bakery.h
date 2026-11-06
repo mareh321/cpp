@@ -21,14 +21,23 @@ namespace miit::bakery
     class Bakery
     {
     private:
+        /** @brief Название хлебопекарни. */
         std::string bakeryName;
+        /** @brief Принадлежащие хлебопекарне записи хлеба. */
         std::deque<Bread> breads;
+        /** @brief Принадлежащие хлебопекарне записи выпечки. */
         std::deque<Pastry> pastries;
+        /** @brief Справочник поставщиков сырья. */
         std::deque<Supplier> suppliers;
+        /** @brief Справочник магазинов. */
         std::deque<Shop> shops;
+        /** @brief Справочник сырья и единиц его измерения. */
         std::deque<Ingredient> ingredients;
+        /** @brief Зарегистрированные заказы сырья поставщикам. */
         std::deque<IngredientOrder> ingredientOrders;
+        /** @brief Зарегистрированные заказы магазинов. */
         std::deque<ShopOrder> shopOrders;
+        /** @brief Записи о фактически произведённых партиях. */
         std::deque<ProductionBatch> production;
         /**
          * @brief Проверяет уникальность названия среди хлеба и выпечки.
