@@ -12,14 +12,7 @@ namespace miit::bakery
         Date date;
         Quantity quantity;
     public:
-        /**
-         * @brief Регистрирует объём производства на дату.
-         * @param productId Положительный ID продукции.
-         * @param date Дата производства.
-         * @param quantity Положительное количество произведённых штук.
-         * @throw std::invalid_argument Если ID равен нулю или количество неположительно.
-         * @note Существование продукции проверяет Bakery до добавления записи.
-         */
+        /** @brief Создаёт партию продукции с указанными ID изделия, датой и количеством. */
         ProductionBatch(const Id productId, const Date& date, const Quantity quantity);
          /**
          * @brief Возвращает ключ продукции.
