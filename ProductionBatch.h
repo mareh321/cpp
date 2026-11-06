@@ -4,17 +4,30 @@
 
 namespace miit::bakery
 {
-    /** @brief Партия фактически произведённой продукции*/
+    /**
+     * @brief Запись о фактически произведённой партии изделий.
+     */
     class ProductionBatch final : public Entity
     {
     private:
+        /** @brief ID произведённого изделия. */
         Id productId;
+        /** @brief Дата фактического производства партии. */
         Date date;
+        /** @brief Количество произведённых изделий в штуках. */
         Quantity quantity;
     public:
-        /** @brief Создаёт партию продукции с указанными ID изделия, датой и количеством. */
+        /**
+         * @brief Регистрирует объём производства на дату.
+         * @param productId Положительный ID продукции.
+         * @param date Дата производства.
+         * @param quantity Положительное количество произведённых штук.
+         * @throw std::invalid_argument Если ID равен нулю или количество неположительно.
+         * @note Существование продукции проверяет Bakery до добавления записи.
+         * @throw std::overflow_error Если исчерпан диапазон ID.
+         */
         ProductionBatch(const Id productId, const Date& date, const Quantity quantity);
-         /**
+        /**
          * @brief Возвращает ключ продукции.
          * @return ID продукции.
          */
