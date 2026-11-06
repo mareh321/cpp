@@ -4,7 +4,15 @@
 
 namespace
 {
-     /** @brief Находит зарегистрированный объект по положительному ID или бросает исключение. */
+     /**
+     * @brief Находит зарегистрированный объект по положительному ID или бросает исключение.
+     * @tparam T Тип записи с методом getId().
+     * @param objects Коллекция зарегистрированных записей.
+     * @param id Положительный ID искомой записи.
+     * @return Константная ссылка на найденную запись, принадлежащую objects.
+     * @throw std::invalid_argument Если ID равен нулю.
+     * @throw std::out_of_range Если запись с указанным ID отсутствует.
+     */
     template <typename T>
     const T& findById(const std::deque<T>& objects, const miit::bakery::Id id)
     {
@@ -14,7 +22,13 @@ namespace
         throw std::out_of_range("Объект с таким ID не найден.");
     }
 
-     /** @brief Проверяет непустое название и отсутствие совпадений в справочнике. */
+     /**
+     * @brief Проверяет непустое название и отсутствие совпадений в справочнике.
+     * @tparam T Тип записи с методом getName().
+     * @param objects Справочник, в котором проверяется уникальность названия.
+     * @param name Проверяемое название; пробелы по краям удаляются для сравнения.
+     * @throw std::invalid_argument Если название пусто после очистки или уже занято.
+     */
     template <typename T>
     void requireNewName(const std::deque<T>& objects, const std::string& name)
     {
@@ -23,13 +37,24 @@ namespace
             if (object.getName() == clean)
                 throw std::invalid_argument("Такое название уже зарегистрировано.");
     }
-    /** @brief Отклоняет период, в котором конечная дата раньше начальной. */
+    /**
+     * @brief Отклоняет период, в котором конечная дата раньше начальной.
+     * @param from Начальная дата периода включительно.
+     * @param to Конечная дата периода включительно.
+     * @throw std::invalid_argument Если to раньше from.
+     */
     void checkPeriod(const miit::bakery::Date& from, const miit::bakery::Date& to)
     {
         if (to < from) throw std::invalid_argument("Конец периода раньше начала.");
     }
 
-    /** @brief Проверяет попадание даты в период с включёнными границами. */
+    /**
+     * @brief Проверяет попадание даты в период с включёнными границами.
+     * @param date Проверяемая дата.
+     * @param from Начальная дата периода включительно.
+     * @param to Конечная дата периода включительно.
+     * @return true, если from <= date и date <= to; иначе false.
+     */
     bool within(const miit::bakery::Date& date, const miit::bakery::Date& from,
         const miit::bakery::Date& to)
     {
