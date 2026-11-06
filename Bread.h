@@ -9,6 +9,7 @@ namespace miit::bakery
     class Bread final : public Product
     {
     private:
+        /** @brief Вид муки, используемой для хлеба. */
         std::string flourType;
     public:
         /**
@@ -18,6 +19,7 @@ namespace miit::bakery
          * @param weightGrams Положительная масса одной штуки в граммах.
          * @param flourType Непустое название вида муки.
          * @throw std::invalid_argument Если строка пуста, цена или масса неположительна.
+         * @throw std::overflow_error Если исчерпан диапазон ID.
          */
         Bread(const std::string& name, const Money price, const Quantity weightGrams,
             const std::string& flourType);
