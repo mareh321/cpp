@@ -14,7 +14,7 @@ namespace miit::bakery
         /** @brief Создаёт магазин с указанными названием и адресом; ID выдаётся автоматически. */
         Shop(const std::string& name, const std::string& address);
         /** @brief Возвращает название магазина. */
-        const std::string& getName() const noexcept
+        const std::string& getName() const noexcept;
         /** @brief Возвращает адрес магазина. */
         const std::string& getAddress() const noexcept;
     };
