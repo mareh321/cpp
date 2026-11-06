@@ -17,18 +17,20 @@ static_assert(std::is_copy_assignable_v<Bakery>);
 static_assert(std::is_move_constructible_v<Bakery>);
 static_assert(std::is_move_assignable_v<Bakery>);
 
-
 namespace BakeryTests
 {
+    /** @brief Проверки календарных дат и их сравнения. */
     TEST_CLASS(DateTests)
     {
     public:
+        /** @brief Проверяет високосный год и строковый формат даты. */
         TEST_METHOD(LeapYearAndFormatting)
         {
             Assert::AreEqual(std::string("2024-02-29"), Date(2024, 2, 29).toString());
             Assert::AreEqual(std::string("0001-01-01"), Date(1, 1, 1).toString());
             Assert::IsTrue(Date("2026-11-02") == Date(2026, 11, 2));
         }
+        /** @brief Отклоняет невозможные даты и годы вне допустимого диапазона. */
         TEST_METHOD(InvalidCalendarDates)
         {
             Assert::ExpectException<std::invalid_argument>([] { Date d(2025, 2, 29); });
@@ -37,6 +39,7 @@ namespace BakeryTests
             Assert::ExpectException<std::invalid_argument>([] { Date d(2026, 13, 1); });
             Assert::ExpectException<std::invalid_argument>([] { Date d(0, 1, 1); });
         }
+        /** @brief Отклоняет нарушения формата и несуществующие даты в строках. */
         TEST_METHOD(StrictDateParsing)
         {
             Assert::ExpectException<std::invalid_argument>([] { Date d("2026-1-01"); });
@@ -44,6 +47,7 @@ namespace BakeryTests
             Assert::ExpectException<std::invalid_argument>([] { Date d("2026-11-02x"); });
             Assert::ExpectException<std::invalid_argument>([] { Date d("2026-02-30"); });
         }
+        /** @brief Проверяет сравнение дат на границах месяцев и лет. */
         TEST_METHOD(ChronologicalComparison)
         {
             Assert::IsTrue(Date(2025, 12, 31) < Date(2026, 1, 1));
@@ -52,9 +56,11 @@ namespace BakeryTests
         }
     };
 
+    /** @brief Проверки сущностей, ключей, цен и ограничений данных. */
     TEST_CLASS(ModelTests)
     {
     public:
+        /** @brief Проверяет разные положительные ID новых записей различных типов. */
         TEST_METHOD(IdsArePositiveAndUniqueAcrossTypes)
         {
             Bread bread("Хлеб", 100, 100, "Мука");
@@ -66,6 +72,7 @@ namespace BakeryTests
                 shop.getId(), ingredient.getId() };
             Assert::IsTrue(ids.size() == 5 && ids.count(0) == 0);
         }
+        /** @brief Отклоняет пустые названия и адреса из пробелов. */
         TEST_METHOD(WhitespaceNamesAreRejected)
         {
             Assert::ExpectException<std::invalid_argument>([] { Bakery b(" \t\n"); });
@@ -73,6 +80,7 @@ namespace BakeryTests
             Assert::ExpectException<std::invalid_argument>([] { Shop s("Магазин", " "); });
             Assert::ExpectException<std::invalid_argument>([] { Ingredient i("", Unit::Gram); });
         }
+        /** @brief Проверяет ограничения цены, массы, характеристик и единиц измерения. */
         TEST_METHOD(ProductValidation)
         {
             Assert::ExpectException<std::invalid_argument>([] { Bread b("Хлеб", 0, 100, "Мука"); });
@@ -80,6 +88,7 @@ namespace BakeryTests
             Assert::ExpectException<std::invalid_argument>([] { Pastry p("Булка", 100, 100, ""); });
             Assert::ExpectException<std::invalid_argument>([] { Ingredient i("Мука", static_cast<Unit>(99)); });
         }
+        /** @brief Проверяет копейки в строке и обнаружение арифметического переполнения. */
         TEST_METHOD(MoneyFormattingAndOverflow)
         {
             Assert::AreEqual(std::string("0.05 руб."), formatMoney(5));
@@ -89,6 +98,7 @@ namespace BakeryTests
             Assert::ExpectException<std::overflow_error>([=] { checkedMultiply(max, 2); });
             Assert::ExpectException<std::invalid_argument>([] { formatMoney(-1); });
         }
+        /** @brief Проверяет ID, количество, цену и стоимость позиции заказа. */
         TEST_METHOD(OrderLineValidation)
         {
             Assert::ExpectException<std::invalid_argument>([] { OrderLine l(0, 1, 100); });
@@ -96,6 +106,7 @@ namespace BakeryTests
             Assert::ExpectException<std::invalid_argument>([] { OrderLine l(1, 1, -1); });
             Assert::IsTrue(OrderLine(1, 3, 125).getTotal() == 375);
         }
+        /** @brief Отклоняет пустые заказы и повтор товара в позициях. */
         TEST_METHOD(EmptyAndDuplicateShopOrdersAreRejected)
         {
             const Date date(2026, 11, 1);
@@ -104,6 +115,7 @@ namespace BakeryTests
                 ShopOrder o(1, date, { OrderLine(2, 1, 100), OrderLine(2, 3, 100) });
             });
         }
+        /** @brief Отклоняет заказ с общей суммой за пределами Money. */
         TEST_METHOD(OrderTotalOverflowIsRejected)
         {
             const Money max = (std::numeric_limits<Money>::max)();
@@ -111,6 +123,7 @@ namespace BakeryTests
                 ShopOrder o(1, Date(2026, 11, 1), { OrderLine(2, 1, max), OrderLine(3, 1, 1) });
             });
         }
+        /** @brief Проверяет ключи и количество в закупках и производстве. */
         TEST_METHOD(ProductionAndIngredientOrderValidation)
         {
             const Date date(2026, 11, 1);
@@ -121,9 +134,11 @@ namespace BakeryTests
         }
     };
 
+    /** @brief Проверки ассортимента, поиска и стабильности ссылок. */
     TEST_CLASS(CatalogTests)
     {
     public:
+        /** @brief Проверяет виртуальные описания хлеба и выпечки через Product. */
         TEST_METHOD(PolymorphicCollectionUsesDerivedDescriptions)
         {
             Bakery b("Пекарня");
@@ -135,6 +150,7 @@ namespace BakeryTests
             Assert::IsTrue(catalog[1].get().toString().find("Выпечка:") == 0);
             Assert::IsTrue(catalog[0].get().getPrice() == 5500);
         }
+        /** @brief Запрещает одинаковые названия хлеба и выпечки. */
         TEST_METHOD(DuplicateProductNamesAcrossSubclasses)
         {
             Bakery b("Пекарня");
@@ -142,6 +158,7 @@ namespace BakeryTests
             Assert::ExpectException<std::invalid_argument>([&] { b.addPastry(" Хлеб ", 100, 100, "Изюм"); });
             Assert::IsTrue(b.getAssortment().size() == 1);
         }
+        /** @brief Запрещает повторы названий в каждом справочнике. */
         TEST_METHOD(DuplicateDirectoryNamesAreRejected)
         {
             Bakery b("Пекарня");
@@ -152,6 +169,7 @@ namespace BakeryTests
             Assert::ExpectException<std::invalid_argument>([&] { b.addShop("Магазин", "Адрес"); });
             Assert::ExpectException<std::invalid_argument>([&] { b.addIngredient("Мука", Unit::Piece); });
         }
+        /** @brief Проверяет ошибки поиска по нулевому ID и неизвестным значениям. */
         TEST_METHOD(UnknownAndZeroIdsAreRejected)
         {
             Bakery b("Пекарня");
@@ -159,6 +177,7 @@ namespace BakeryTests
             Assert::ExpectException<std::out_of_range>([&] { b.getShop(999999); });
             Assert::ExpectException<std::out_of_range>([&] { b.getProductByName("Нет такого товара"); });
         }
+        /** @brief Проверяет сохранность ссылки после добавления множества изделий. */
         TEST_METHOD(ReferencesStayValidWhenCatalogGrows)
         {
             Bakery b("Пекарня");
@@ -169,6 +188,25 @@ namespace BakeryTests
             Assert::AreEqual(std::string("Первый"), first.getName());
         }
     };
+
+    /** @brief Проверяет стандартное копирование и перемещение данных хлебопекарни. */
+    TEST_CLASS(CopyTests)
+    {
+    public:
+        /** @brief Копия сохраняет все связи и работает после уничтожения оригинала. */
+        TEST_METHOD(CopyConstructorPreservesLinksAfterSourceDestruction)
+        {
+            Id product = 0, shop = 0, supplier = 0, ingredient = 0;
+            const Date d(2026, 11, 1);
+            Bakery copied = [&]() {
+                Bakery source("Пекарня");
+                product = source.addBread("Хлеб", 5500, 400, "Мука").getId();
+                source.addPastry("Булка", 8500, 100, "Изюм");
+                shop = source.addShop("Магазин", "Адрес").getId();
+                supplier = source.addSupplier("Поставщик", "Адрес").getId();
+                ingredient = source.addIngredient("Мука", Unit::Gram).getId();
+                source.orderIngredient(supplier, ingredient, d, 1000, 5);
+                source.placeShopOrder(shop, d, {{product, 2}});
                 source.recordProduction(product, d, 7);
                 return Bakery(source);
             }();
@@ -288,9 +326,11 @@ namespace BakeryTests
         }
     };
 
+    /** @brief Проверки расчётов и отбора записей для четырёх отчётов. */
     TEST_CLASS(ReportTests)
     {
     public:
+        /** @brief Проверяет отбор поставщика, сырья и обеих границ периода. */
         TEST_METHOD(SupplierPeriodAndIngredientFilters)
         {
             Bakery b("Пекарня");
@@ -309,6 +349,7 @@ namespace BakeryTests
             Assert::IsTrue(b.getIngredientTotal(s, flour, from, to) == 17000);
             Assert::IsTrue(b.getSupplierOrders(s, from, to).size() == 3);
         }
+        /** @brief Не позволяет зарегистрировать закупку с отсутствующими связями. */
         TEST_METHOD(SupplierOrderRejectsUnknownLinks)
         {
             Bakery b("Пекарня");
@@ -319,6 +360,7 @@ namespace BakeryTests
             Assert::ExpectException<std::out_of_range>([&] { b.orderIngredient(s, 999999, d, 1, 1); });
             Assert::IsTrue(b.getSupplierOrders(s, d, d).empty());
         }
+        /** @brief Проверяет заказы магазина, количество и стоимость каждого товара. */
         TEST_METHOD(ShopOrdersProductsAndTotals)
         {
             Bakery b("Пекарня");
@@ -339,6 +381,7 @@ namespace BakeryTests
             Assert::IsTrue(b.getShopProductIds(s, from, to).size() == 2);
             Assert::IsTrue(b.getShopOrders(s, from, to).size() == 2);
         }
+        /** @brief Проверяет сохранность данных после отклонения заказа. */
         TEST_METHOD(FailedShopOrderDoesNotChangeReports)
         {
             Bakery b("Пекарня");
@@ -352,6 +395,7 @@ namespace BakeryTests
             Assert::IsTrue(b.getShopOrdersTotal(s, d, d) == 100);
             Assert::IsTrue(b.getShopOrders(s, d, d).size() == 1);
         }
+        /** @brief Проверяет объём производства по периоду и названию. */
         TEST_METHOD(ProductionFiltersByPeriodAndName)
         {
             Bakery b("Пекарня");
@@ -366,6 +410,7 @@ namespace BakeryTests
             Assert::IsTrue(b.getProducedQuantity("Хлеб", from, to) == 30);
             Assert::IsTrue(b.getProducedQuantity("Булка", from, to) == 5);
         }
+        /** @brief Проверяет раздельный учёт заказов и фактического производства. */
         TEST_METHOD(OrdersDoNotCountAsProduction)
         {
             Bakery b("Пекарня");
@@ -375,6 +420,7 @@ namespace BakeryTests
             b.placeShopOrder(s, d, { {p, 20} });
             Assert::IsTrue(b.getProducedQuantity(d, d) == 0);
         }
+        /** @brief Проверяет нулевые итоги при отсутствии подходящих записей. */
         TEST_METHOD(EmptyReportsAreZero)
         {
             Bakery b("Пекарня");
@@ -388,6 +434,7 @@ namespace BakeryTests
             Assert::IsTrue(b.getIngredientQuantity(v, i, d, d) == 0);
             Assert::IsTrue(b.getProducedQuantity("Хлеб", d, d) == 0);
         }
+        /** @brief Проверяет отклонение периода с обратным порядком дат. */
         TEST_METHOD(ReversePeriodIsRejected)
         {
             Bakery b("Пекарня");
@@ -398,11 +445,13 @@ namespace BakeryTests
             Assert::ExpectException<std::invalid_argument>([&] { b.getSupplierOrders(v, from, to); });
             Assert::ExpectException<std::invalid_argument>([&] { b.getProducedQuantity(from, to); });
         }
+        /** @brief Не позволяет записать производство неизвестной продукции. */
         TEST_METHOD(ProductionRejectsUnknownProduct)
         {
             Bakery b("Пекарня");
             Assert::ExpectException<std::out_of_range>([&] { b.recordProduction(999999, Date(2026, 11, 1), 5); });
         }
+        /** @brief Проверяет переполнение при суммировании объёмов производства. */
         TEST_METHOD(ReportOverflowIsDetected)
         {
             Bakery b("Пекарня");
